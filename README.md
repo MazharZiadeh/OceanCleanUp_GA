@@ -25,14 +25,7 @@ OVERVIEW
 ----------------------------------------------
 USAGE
 ----------------------------------------------
-1. Clone/Download this repository.
-2. In MATLAB (R2021 or later recommended), navigate to the folder containing OceanCleanupGA_Complete.m.
-3. Run the script:
-
-   clear all; close all;
-   OceanCleanupGA_Complete;
-
-4. Adjust Parameters inside OceanCleanupGA_Complete.m:
+Adjust Parameters inside OceanCleanupGA_Complete.m:
    - numRuns: Number of independent GA trials.
    - populationSize: GA population size.
    - numGenerations: GA evolution length per run.
@@ -40,7 +33,7 @@ USAGE
    - inputSize, hiddenSize, outputSize: LSTM architecture dimensions.
    - crossoverRate, mutationRate, elitismCount: GA hyperparameters.
 
-5. Results:
+Results:
    - You’ll see plots of average best-fitness ± std dev over generations for all runs.
    - bestNetwork_runX.mat is saved for each run.
    - Finally, an animation of the champion (best overall) LSTM network’s movement is displayed.
