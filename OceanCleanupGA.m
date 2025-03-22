@@ -1,18 +1,11 @@
 function OceanCleanupGA_Complete()
     % OCEANCLEANUPGA_COMPLETE
-    % 
     % One big script that:
     % 1. Runs multiple GA trials of an LSTM-based ocean cleanup system.
     % 2. Plots average + std of best-fitness across runs.
     % 3. Visualizes environment (plastic distribution + currents).
     % 4. Saves best networks from each run.
     % 5. Finds the best-of-the-best and animates it.
-    %
-    % "One code to rule them all."
-    %
-    % Usage:
-    %   clear all; close all; 
-    %   OceanCleanupGA_Complete;
 
     %% ==================== USER-PICKED PARAMETERS ====================
 clc
