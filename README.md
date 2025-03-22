@@ -1,6 +1,4 @@
-Ocean Cleanup GA Complete
-
-applies a genetic algorithm (GA) to train an LSTM-based agent for cleaning up plastic in a simulated ocean environment with dynamic currents.
+https://www.researchgate.net/publication/390095494_A_Genetic_Algorithm-Driven_LSTM_Approach_for_Ocean_Plastic_Cleanup 
 
 ----------------------------------------------
 OVERVIEW
@@ -101,9 +99,3 @@ Feel free to create pull requests or open issues to:
 - Incorporate additional performance metrics or new fitness functions
 
 ----------------------------------------------
-LICENSE
-----------------------------------------------
-This project is provided “as is” for educational and research purposes. If you use or adapt this code, an attribution to the original source is appreciated.
-
-----------------------------------------------
-Happy coding, and enjoy exploring AI-driven approaches to marine cleanup!
