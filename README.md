@@ -1,128 +1,109 @@
-🌊 Ocean Cleanup with LSTM + Genetic Algorithms
+Ocean Cleanup GA Complete
 
+applies a genetic algorithm (GA) to train an LSTM-based agent for cleaning up plastic in a simulated ocean environment with dynamic currents.
 
-This project simulates an autonomous ocean cleanup agent powered by an LSTM neural network trained through Genetic Algorithms (GA). The goal: navigate dynamic ocean currents, collect plastic efficiently, and evolve smarter cleanup strategies over multiple generations.
+----------------------------------------------
+OVERVIEW
+----------------------------------------------
+1. Multiple GA Trials
+   - The script runs multiple independent GA trials (configurable via numRuns), each evolving a population of LSTM networks to maximize plastic collection while minimizing movement cost.
 
-🧠 What It Does
-Evolves LSTM-based agents to collect ocean plastic.
+2. Generation-by-Generation Visualization
+   - It saves and plots the best fitness scores across generations for each GA run, then displays aggregated statistics (mean ± standard deviation) across all runs.
 
-Simulates plastic distribution + ocean currents in a 2D environment.
+3. Environment Simulation
+   - Creates a randomized 2D grid with “plastic hotspots” and sinusoidal current fields. The agent uses an LSTM to decide movement actions ([deltaX, deltaY]).
 
-Runs multiple GA trials to optimize the agent's neural networks.
+4. Best Networks Saved
+   - After each run, the best network is saved to a .mat file. The script identifies the overall champion network (best-of-the-best) and visualizes its performance via an animation.
 
-Saves and analyzes the best networks from each run.
+5. Core Functions
+   - simulateCleanup(...): Rolls out the LSTM agent in the environment and returns its fitness (total plastic collected minus movement penalty).
+   - runSingleGA(...): Handles the GA loop for one run (initialization, selection, crossover, mutation, elitism).
+   - visualizeEnvironment(...): Displays a heatmap of plastic distribution and a quiver plot of currents.
+   - animateAgent(...): Animates the champion network’s path through the environment.
+   - Utility: LSTM initialization and forward pass, crossover, mutation, and basic tournament selection.
 
-Visualizes:
+----------------------------------------------
+USAGE
+----------------------------------------------
+1. Clone/Download this repository.
+2. In MATLAB (R2021 or later recommended), navigate to the folder containing OceanCleanupGA_Complete.m.
+3. Run the script:
 
-Environment (plastic & current fields)
+   clear all; close all;
+   OceanCleanupGA_Complete;
 
-Fitness stats (mean ± std across generations)
+4. Adjust Parameters inside OceanCleanupGA_Complete.m:
+   - numRuns: Number of independent GA trials.
+   - populationSize: GA population size.
+   - numGenerations: GA evolution length per run.
+   - numTimesteps: Simulation length for each agent evaluation.
+   - inputSize, hiddenSize, outputSize: LSTM architecture dimensions.
+   - crossoverRate, mutationRate, elitismCount: GA hyperparameters.
 
-Best agent in action (animated path)
+5. Results:
+   - You’ll see plots of average best-fitness ± std dev over generations for all runs.
+   - bestNetwork_runX.mat is saved for each run.
+   - Finally, an animation of the champion (best overall) LSTM network’s movement is displayed.
 
-📦 Features
-Modular GA Framework: Tournament selection, crossover, mutation, elitism.
+----------------------------------------------
+FILE STRUCTURE
+----------------------------------------------
+- OceanCleanupGA_Complete.m
+  - Top-level Code
+    - Parameters, environment creation, GA loop across multiple runs, final champion identification, and champion animation.
+  - Helper Functions (within the same file)
+    - runSingleGA()
+    - simulateCleanup()
+    - getPlasticDensity()
+    - lstmForward()
+    - randomLSTM()
+    - crossoverLSTM()
+    - mutateLSTM()
+    - tournamentSelect()
+    - visualizeEnvironment()
+    - animateAgent()
+    - sigmoid()
 
-Simple LSTM Implementation: Custom forward pass with full weight/bias control.
+No additional toolboxes or dependencies are required. This script uses standard MATLAB functions.
 
-Dynamic Environment:
+----------------------------------------------
+HOW IT WORKS
+----------------------------------------------
+1. Environment
+   - A 10×10 area with randomly generated plastic hotspots. Currents are determined by sinusoidal functions of position and time.
 
-Sinusoidal ocean currents
+2. LSTM Agent
+   - Each LSTM agent receives local plastic density, current velocities, and its own [x, y] position as input, then outputs [Δx, Δy] actions.
 
-Radial plastic hotspots
+3. Fitness Function
+   - Maximizes total plastic collected minus a small cost for movement. The agent has an optional capacity limit to keep it realistic.
 
-Fitness Function:
+4. Genetic Algorithm Steps
+   - Population Initialization: Each individual’s LSTM weights/biases are randomized.
+   - Evaluation: Each individual is rolled out in the environment for numTimesteps; fitness is measured.
+   - Selection: Tournament selection picks the better among random samples.
+   - Crossover: Uniform crossover swaps partial genes (weights/biases) between parents.
+   - Mutation: Some genes are perturbed with Gaussian noise.
+   - Elitism: A few top individuals survive automatically to the next generation.
 
-Rewards plastic collection
+5. Best-of-the-Best
+   - After all runs, each run’s final best network is re-evaluated to find the overall champion, which is then animated step by step in the environment.
 
-Penalizes excessive movement
+----------------------------------------------
+CONTRIBUTING
+----------------------------------------------
+Feel free to create pull requests or open issues to:
+- Tweak parameters
+- Model a more complex environment
+- Explore multi-layer or alternate-activation LSTM architectures
+- Incorporate additional performance metrics or new fitness functions
 
-🛠️ How to Run
-matlab
-Copy
-Edit
-clear all; close all;
-OceanCleanupGA_Complete;
-Requires MATLAB. No external toolboxes needed.
+----------------------------------------------
+LICENSE
+----------------------------------------------
+This project is provided “as is” for educational and research purposes. If you use or adapt this code, an attribution to the original source is appreciated.
 
-⚙️ Parameters (Editable in Script)
-Parameter	Description	Default
-numRuns	Number of GA trials	10
-populationSize	Number of networks per GA run	20
-numGenerations	How many generations to evolve	50
-numTimesteps	Steps per agent simulation	50
-inputSize	Input vector size for LSTM	5
-hiddenSize	Hidden layer size of LSTM	8
-outputSize	Output vector size (agent motion)	2
-crossoverRate	Probability of crossover	0.3
-mutationRate	Probability of mutation	0.1
-elitismCount	Top individuals passed unchanged each gen	2
-📊 Outputs
-bestNetwork_runX.mat: Saved LSTM networks for each GA run.
-
-Fitness plot: Mean ± standard deviation across runs.
-
-Environment heatmap: Plastic density + current vectors.
-
-Agent animation: Final champion network path in the environment.
-
-🧬 How It Works (TL;DR)
-Create Environment:
-
-10x10 ocean with plastic hotspots & sinusoidal currents.
-
-Run Genetic Algorithm:
-
-Random LSTM weights.
-
-Evaluate fitness via simulation.
-
-Evolve over generations using crossover/mutation.
-
-Track Best Networks:
-
-Save best of each run.
-
-Pick champion network across all runs.
-
-Animate Best Agent:
-
-Watch it clean plastic in real time.
-
-🧠 Concepts Behind the Project
-Neuroevolution: Training neural networks with evolutionary algorithms instead of backpropagation.
-
-LSTM (Long Short-Term Memory): Memory-capable neural networks, enabling agents to learn temporal patterns.
-
-Evolutionary Strategies: Genetic Algorithms used for search and optimization over parameter space.
-
-Agent-based Modeling: Simulating intelligent behavior in dynamic, partially predictable environments.
-
-📸 Screenshots
-(Add GIFs or PNGs here if you have them!)
-
-Fitness over generations
-
-Environment heatmap
-
-Best agent's animated trajectory
-
-🔥 Why This is Cool
-Self-evolving AI without gradients or labeled data.
-
-Realistic environmental modeling.
-
-Fully visual, interactive, and modifiable.
-
-Foundation for real-world applications in autonomous marine robotics.
-
-🧪 Potential Extensions
-Use real ocean current data (e.g., NOAA datasets)
-
-Multi-agent cooperation or competition
-
-Upgrade LSTM with attention or GRU
-
-Hardware deployment on underwater robots
-
-Add 3D simulation and physics
+----------------------------------------------
+Happy coding, and enjoy exploring AI-driven approaches to marine cleanup!
