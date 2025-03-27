@@ -1,94 +1,80 @@
 https://www.researchgate.net/publication/390095494_A_Genetic_Algorithm-Driven_LSTM_Approach_for_Ocean_Plastic_Cleanup 
 
-----------------------------------------------
-OVERVIEW
-----------------------------------------------
-1. Multiple GA Trials
-   - The script runs multiple independent GA trials (configurable via numRuns), each evolving a population of LSTM networks to maximize plastic collection while minimizing movement cost.
+**README: Ocean Plastic Cleanup with LSTM + Genetic Algorithm**
 
-2. Generation-by-Generation Visualization
-   - It saves and plots the best fitness scores across generations for each GA run, then displays aggregated statistics (mean ± standard deviation) across all runs.
+---
 
-3. Environment Simulation
-   - Creates a randomized 2D grid with “plastic hotspots” and sinusoidal current fields. The agent uses an LSTM to decide movement actions ([deltaX, deltaY]).
+## Overview
+This repository demonstrates a *Genetic Algorithm (GA)* approach to training an *LSTM-based agent* for autonomous ocean plastic collection. The goal is to develop a policy that navigates a simulated environment, gathers plastic debris efficiently, and balances movement costs against the amount of plastic collected.
 
-4. Best Networks Saved
-   - After each run, the best network is saved to a .mat file. The script identifies the overall champion network (best-of-the-best) and visualizes its performance via an animation.
+---
 
-5. Core Functions
-   - simulateCleanup(...): Rolls out the LSTM agent in the environment and returns its fitness (total plastic collected minus movement penalty).
-   - runSingleGA(...): Handles the GA loop for one run (initialization, selection, crossover, mutation, elitism).
-   - visualizeEnvironment(...): Displays a heatmap of plastic distribution and a quiver plot of currents.
-   - animateAgent(...): Animates the champion network’s path through the environment.
-   - Utility: LSTM initialization and forward pass, crossover, mutation, and basic tournament selection.
+## Key Components
+1. **Environment**  
+   - A 2D ocean grid (`env.sizeX`, `env.sizeY`) with *plastic hotspots* and *dynamic ocean currents*.
+   - The agent starts near the center and moves around collecting plastic.
 
-----------------------------------------------
-USAGE
-----------------------------------------------
-Adjust Parameters inside OceanCleanupGA_Complete.m:
-   - numRuns: Number of independent GA trials.
-   - populationSize: GA population size.
-   - numGenerations: GA evolution length per run.
-   - numTimesteps: Simulation length for each agent evaluation.
-   - inputSize, hiddenSize, outputSize: LSTM architecture dimensions.
-   - crossoverRate, mutationRate, elitismCount: GA hyperparameters.
+2. **LSTM Agent**  
+   - Takes a 5D input: `[plasticDensity, currentX, currentY, agentX, agentY]`.
+   - Outputs `[deltaX, deltaY]` movement commands.
+   - Evolved via a GA by mutating and recombining the LSTM’s weights.
 
-Results:
-   - You’ll see plots of average best-fitness ± std dev over generations for all runs.
-   - bestNetwork_runX.mat is saved for each run.
-   - Finally, an animation of the champion (best overall) LSTM network’s movement is displayed.
+3. **Genetic Algorithm**  
+   - *Population-based search* (e.g., 30–50 individuals).
+   - *Crossover & Mutation* operators to evolve LSTM weights.
+   - *Fitness* = total plastic collected – (movement penalty).
 
-----------------------------------------------
-FILE STRUCTURE
-----------------------------------------------
-- OceanCleanupGA_Complete.m
-  - Top-level Code
-    - Parameters, environment creation, GA loop across multiple runs, final champion identification, and champion animation.
-  - Helper Functions (within the same file)
-    - runSingleGA()
-    - simulateCleanup()
-    - getPlasticDensity()
-    - lstmForward()
-    - randomLSTM()
-    - crossoverLSTM()
-    - mutateLSTM()
-    - tournamentSelect()
-    - visualizeEnvironment()
-    - animateAgent()
-    - sigmoid()
+4. **Multiple GA Runs**  
+   - We run ~50 independent trials, each with up to 200 generations (or more).  
+   - Each run logs `Gen # | Best Fitness = <value>` to track improvement over time.
 
-No additional toolboxes or dependencies are required. This script uses standard MATLAB functions.
+---
 
-----------------------------------------------
-HOW IT WORKS
-----------------------------------------------
-1. Environment
-   - A 10×10 area with randomly generated plastic hotspots. Currents are determined by sinusoidal functions of position and time.
+## Notable Results
+After tuning hyperparameters (population size, mutation rate, generations, etc.), some GA runs began reaching **fitness values in the 30–40+ range** by the 200th generation. Below is a summary of key findings:
 
-2. LSTM Agent
-   - Each LSTM agent receives local plastic density, current velocities, and its own [x, y] position as input, then outputs [Δx, Δy] actions.
+- **Early Generations:** Fitness often starts in the single digits or teens, as the initial random policies barely collect plastic.
+- **Mid Generations (50–150):** Most runs show steady gains. Some plateau while others leap ahead if the population stumbles upon a more efficient trajectory.
+- **Late Generations (150–200+):**  
+  - Several runs exceed 30 fitness, with some surpassing 40 and even hitting ~43 in the best cases.  
+  - The agent refines its strategy to remain near dense hotspots and keep movement cost manageable.
 
-3. Fitness Function
-   - Maximizes total plastic collected minus a small cost for movement. The agent has an optional capacity limit to keep it realistic.
+Overall, the improvements confirm that:
+- **Longer GA runs** or **better hyperparameters** (e.g., bigger population, higher/lower mutation, refined crossover) significantly boost final fitness.
+- **Fitness** can vary widely across runs due to stochastic initialization and random seeds, but on average we see a substantial improvement compared to shorter or poorly tuned runs.
 
-4. Genetic Algorithm Steps
-   - Population Initialization: Each individual’s LSTM weights/biases are randomized.
-   - Evaluation: Each individual is rolled out in the environment for numTimesteps; fitness is measured.
-   - Selection: Tournament selection picks the better among random samples.
-   - Crossover: Uniform crossover swaps partial genes (weights/biases) between parents.
-   - Mutation: Some genes are perturbed with Gaussian noise.
-   - Elitism: A few top individuals survive automatically to the next generation.
+---
 
-5. Best-of-the-Best
-   - After all runs, each run’s final best network is re-evaluated to find the overall champion, which is then animated step by step in the environment.
+## Usage
 
-----------------------------------------------
-CONTRIBUTING
-----------------------------------------------
-Feel free to create pull requests or open issues to:
-- Tweak parameters
-- Model a more complex environment
-- Explore multi-layer or alternate-activation LSTM architectures
-- Incorporate additional performance metrics or new fitness functions
+1. **Run the Main Script**  
+   - The primary entry point is `OceanCleanupGA_Complete.m`.  
+   - Adjust hyperparameters at the top to match your system or experimentation needs (e.g., `numRuns`, `numGenerations`, `populationSize`).
+   - Run in MATLAB/Octave:
+     ```matlab
+     OceanCleanupGA_Complete
+     ```
+2. **Analyze Results**  
+   - During the GA, you’ll see console logs like `Gen # | Best Fitness = …` for each run.  
+   - Post-run, check out:
+     - *Mean and standard deviation* plots of best fitness (across multiple runs).
+     - The final “champion” agent animation showing how it navigates the ocean.
+![image](https://github.com/user-attachments/assets/cc0d5d95-7075-44c0-a756-4ada581ccc80)
+![image](https://github.com/user-attachments/assets/aa61efcb-14a2-4ef2-be29-d4d5482106b9)
+![image](https://github.com/user-attachments/assets/a8aeba9b-d88c-4712-8e81-af9abc92b666)
 
-----------------------------------------------
+
+
+---
+
+## Tips & Tweaks
+- **Increase Generations**: If your runs plateau early, give them more time (200+ generations).  
+- **Adjust Mutation/Crossover**: If you need more exploration, raise mutation (0.15+). If solutions converge too slowly, lower mutation or increase elitism.  
+- **Population Size**: Larger populations (50+) can produce more diverse solutions and avoid local optima, but require more computation.
+
+---
+
+## Contributing
+Feel free to open issues or pull requests if you spot improvements, optimizations, or wish to add features like a more realistic ocean current model or advanced LSTM architectures.
+
+---
