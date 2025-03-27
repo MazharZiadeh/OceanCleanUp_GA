@@ -1,22 +1,26 @@
 function OceanCleanupGA_Complete()
     % OCEANCLEANUPGA_COMPLETE
+    % 
     % One big script that:
     % 1. Runs multiple GA trials of an LSTM-based ocean cleanup system.
     % 2. Plots average + std of best-fitness across runs.
     % 3. Visualizes environment (plastic distribution + currents).
     % 4. Saves best networks from each run.
     % 5. Finds the best-of-the-best and animates it.
+    %
+    % "One code to rule them all."
+
 
     %% ==================== USER-PICKED PARAMETERS ====================
 clc
 clear all
 close all
     % --- GA and Simulation Hyperparameters ---
-    numRuns         = 10;   % how many separate GA trials
-    populationSize  = 20;   % GA population
-    numGenerations  = 50;   % how many generations per run
-    crossoverRate   = 0.3;
-    mutationRate    = 0.1;
+    numRuns         = 50;   % how many separate GA trials
+    populationSize  = 50;   % GA population
+    numGenerations  = 200;   % how many generations per run
+    crossoverRate   = 0.6;
+    mutationRate    = 0.15;
     numTimesteps    = 50;   % length of each simulation
     elitismCount    = 2;    % how many elites survive each gen
 
@@ -24,9 +28,6 @@ close all
     inputSize       = 5;   % [plasticDensity, currentX, currentY, agentX, agentY]
     hiddenSize      = 8;
     outputSize      = 2;   % [deltaX, deltaY]
-
-    % If you want reproducibility, you can fix the seed or shuffle it:
-    % rng('shuffle');  % comment/uncomment as needed
 
     %% ==================== STEP 1: CREATE ENVIRONMENT ONCE ====================
     env = createEnvironment();
